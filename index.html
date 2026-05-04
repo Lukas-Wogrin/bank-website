@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #e9ecef;
+        }
+
+        header {
+            background: #343a40;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #343a40;
+        }
+
+        form {
+            margin-top: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input, select {
+            margin: 5px;
+            padding: 10px;
+            width: calc(30% - 22px);
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #message {
+            margin-top: 20px;
+            color: green;
+        }
+
+        #customerList {
+            list-style: none;
+            padding: 0;
+        }
+
+        #customerList li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .female {
+            background-color: #f8d3e2; /* Hellpink für weibliche Konten */
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bank App</h1>
+    </header>
+    <main>
+        <div id="loginSection">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Benutzername" required>
+            <input type="password" id="password" placeholder="Passwort" required>
+            <button id="loginButton">Einloggen</button>
+            <div id="loginMessage"></div>
+        </div>
+
+        <section id="bankSection" style="display:none;">
+            <h2>Kundenliste</h2>
+            <ul id="customerList"></ul>
+
+            <h2>Geldüberweisung</h2>
+            <form id="transferForm">
+                <select id="fromAccount" required></select>
+                <select id="toAccount" required></select>
+                <input type="number" id="amount" placeholder="Betrag" required>
+                <button type="submit">Überweisen</button>
+            </form>
+            <div id="message"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Bank App. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <script>
+        let customers = [
+            { accountNumber: 1, name: "Levi", balance: 500, username: "levi123", password: "pass123", gender: "M" },
+            { accountNumber: 2, name: "Emil", balance: 1000, username: "emil123", password: "pass123", gender: "M" },
+            { accountNumber: 3, name: "Anton", balance: 750, username: "anton123", password: "pass123", gender: "M" },
+            { accountNumber: 4, name: "Theo", balance: 1200, username: "theo123", password: "pass123", gender: "M" },
+            { accountNumber: 5, name: "Liam", balance: 300, username: "liam123", password: "pass123", gender: "M" },
+            { accountNumber: 6, name: "Paul", balance: 950, username: "paul123", password: "pass123", gender: "M" },
+            { accountNumber: 7, name: "Jakob", balance: 800, username: "jakob123", password: "pass123", gender: "M" },
+            { accountNumber: 8, name: "Leano", balance: 450, username: "leano123", password: "pass123", gender: "M" },
+            { accountNumber: 9, name: "Felix", balance: 600, username: "felix123", password: "pass123", gender: "M" },
+            { accountNumber: 10, name: "Elias", balance: 850, username: "elias123", password: "pass123", gender: "M" },
+            { accountNumber: 11, name: "Lina", balance: 700, username: "lina123", password: "pass123", gender: "W" },
+            { accountNumber: 12, name: "Emilia", balance: 900, username: "emilia123", password: "pass123", gender: "W" },
+            { accountNumber: 13, name: "Emma", balance: 550, username: "emma123", password: "pass123", gender: "W" },
+            { accountNumber: 14, name: "Ella", balance: 400, username: "ella123", password: "pass123", gender: "W" },
+            { accountNumber: 15, name: "Ida", balance: 650, username: "ida123", password: "pass123", gender: "W" },
+            { accountNumber: 16, name: "Lia", balance: 720, username: "lia123", password: "pass123", gender: "W" },
+            { accountNumber: 17, name: "Lea", balance: 780, username: "lea123", password: "pass123", gender: "W" },
+            { accountNumber: 18, name: "Amalia", balance: 610, username: "amalia123", password: "pass123", gender: "W" },
+            { accountNumber: 19, name: "Leonie", balance: 950, username: "leonie123", password: "pass123", gender: "W" },
+            { accountNumber: 20, name: "Lena", balance: 500, username: "lena123", password: "pass123", gender: "W" },
+            { accountNumber: 21, name: "Transformer", balance: -15000, username: "t123", password: "pass123", gender: "D" },
+            { accountNumber: 22, name: "Admin", balance: Infinity, username: "admin", password: "admin", gender: "M" } // Admin-Konto mit unendlichem Geld
+        ];
+
+        let currentUser = null;
+
+        function renderCustomers() {
+            const customerList = document.getElementById('customerList');
+            const fromAccountSelect = document.getElementById('fromAccount');
+            const toAccountSelect = document.getElementById('toAccount');
+            
+            customerList.innerHTML = '';
+            fromAccountSelect.innerHTML = '';
+            toAccountSelect.innerHTML = '';
+
+            customers.forEach(customer => {
+                const li = document.createElement('li');
+                li.className = customer.gender === "W" ? "female" : "";
+                li.textContent = `Konto-Nr: ${customer.accountNumber}` + (currentUser.accountNumber === 22 ? `, Name: ${customer.name}, Guthaben: ${customer.balance === Infinity ? "Unbegrenzt" : customer.balance + " €"}` : "");
+
+                if (currentUser && currentUser.accountNumber !== 22) {
+                    li.textContent += `, Guthaben: ${customer.accountNumber === currentUser.accountNumber ? customer.balance + " €" : "****"}`;
+                }
+
+                customerList.appendChild(li);
+
+                // Füge Konten für Überweisungen hinzu
+                const optionFrom = document.createElement('option');
+                optionFrom.value = customer.accountNumber;
+                optionFrom.textContent = `Konto-Nr: ${customer.accountNumber}`;
+                fromAccountSelect.appendChild(optionFrom);
+
+                const optionTo = document.createElement('option');
+                optionTo.value = customer.accountNumber;
+                optionTo.textContent = `Konto-Nr: ${customer.accountNumber}`;
+                toAccountSelect.appendChild(optionTo);
+            });
+        }
+
+        document.getElementById('loginButton').addEventListener('click', () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginMessage = document.getElementById('loginMessage');
+            const user = customers.find(c => c.username === username && c.password === password);
+
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('bankSection').style.display = 'block';
+                renderCustomers();
+            } else {
+                loginMessage.textContent = "Ungültige Anmeldeinformationen!";
+                loginMessage.style.color = "red";
+            }
+        });
+
+        document.getElementById('transferForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fromAccount = parseInt(document.getElementById('fromAccount').value);
+            const toAccount = parseInt(document.getElementById('toAccount').value);
+            const amount = parseFloat(document.getElementById('amount').value);
+            const messageDiv = document.getElementById('message');
+
+            const fromCustomer = customers.find(c => c.accountNumber === fromAccount);
+            const toCustomer = customers.find(c => c.accountNumber === toAccount);
+
+            if (!toCustomer) {
+                messageDiv.textContent = "Kunde nicht gefunden!";
+                messageDiv.style.color = "red";
+                return;
+            }
+
+            if (currentUser.accountNumber !== 22) { // Nur für normale Benutzer
+                if (fromCustomer.accountNumber !== currentUser.accountNumber) {
+                    messageDiv.textContent = "Sie können nur von Ihrem eigenen Konto überweisen!";
+                    messageDiv.style.color = "red";
+                    return;
+                }
+
+                if (fromCustomer.balance < amount) {
+                    messageDiv.textContent = "Unzureichendes Guthaben!";
+                    messageDiv.style.color = "red";
+                    return;
+                }
+
+                // Geldüberweisung durchführen
+                fromCustomer.balance -= amount;
+                toCustomer.balance += amount;
+
+                messageDiv.textContent = "Überweisung erfolgreich!";
+            } else { // Admin kann von einem anderen Konto überweisen
+                if (fromCustomer.balance < amount) {
+                    messageDiv.textContent = "Unzureichendes Guthaben für die Überweisung vom Admin!";
+                    messageDiv.style.color = "red";
+                    return;
+                }
+
+                fromCustomer.balance -= amount;
+                toCustomer.balance += amount;
+
+                messageDiv.textContent = "Überweisung als Admin erfolgreich!";
+            }
+
+            renderCustomers();
+        });
+
+        // Kundenliste initial rendern
+        renderCustomers();
+    </script>
+</body>
+</html>
